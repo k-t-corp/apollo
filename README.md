@@ -3,7 +3,8 @@ VM provisioning scripts + application deployment system that focuses on one-app-
 
 ## Philosophy
 * One-app-per-VM: Tools such as Dokku and CapRover focuses on having multiple apps per machine/VM. I think this makes their systems more complex, more noisy-neighbor and less fault-tolerant. 
-* VM as the base: By not using higher-level abstractions such as Kubernetes, it is easier to understand and easier to make low-level customizations (if needed).
+* VM as the base: By not using higher-level abstractions such as Kubernetes, the system is easier to understand and easier to make low-level customizations (if needed).
+* Only take what you need: You can take only a subpart/submodule of the system and use just that. 
 
 ## Features
 * VM Provisioning and Security Setup (one-time)
