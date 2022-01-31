@@ -2,7 +2,7 @@
 Linux provisioning scripts + application deployment tools. Suitable for self-hosting and hobby-scale application deployments.
 
 ## Philosophy
-* Linux-native: Apollo tools delegate logic to Linux-native programs as much as possible.
+* Linux-native: Apollo tools delegate logic to native Linux programs as much as possible.
 * Small and easy to understand: As a collary, apollo tools are small, have minimal logic, and are easy to understand.
 * Modular: Apollo tools can each be used standalone and run independently.
 * Collaborating: Apollo tools can also collaborate via small, well-defined and Linux-native interfaces.
