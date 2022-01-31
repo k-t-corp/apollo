@@ -11,34 +11,34 @@ Linux provisioning scripts + application deployment tools. Suitable for self-hos
 * Open for customization: By basing on Linux, it is also easier to make ad-hoc customizations to your machines and applications if needed.
 
 ## Features
-* Linux Provisioning and Security Setup (one-time)
-* Linux Monitoring (continuous)
-* Application Deployment (one-time) and Continuous Deployment (continuous)
+- [ ] Linux Provisioning and Security Setup (one-time)
+- [ ] Linux Monitoring (continuous)
+- [ ] Application Deployment (one-time) and Continuous Deployment (continuous)
   * Application types
-    * Private non-Docker workload
-    * Public Docker workload
-    * Public non-Docker workload
+    - [ ] Private non-Docker workload
+    - [ ] Public Docker workload
+    - [ ] Public non-Docker workload
   * Workload types
-    * Web
-    * Pre-deploy
-    * Background
-* Environment and Secret Injection (continuous)
-* Logging (continuous)
-* Database Provisioning
+    - [ ] Web
+    - [ ] Pre-deploy
+    - [ ] Background
+- [ ] Environment and Secret Injection (continuous)
+- [ ] Logging (continuous)
+- [ ] Database Provisioning
   * Types
-    * MongoDB
-    * Postgres
-    * Redis
-    * ElasticSearch
+    - [ ] MongoDB
+    - [ ] Postgres
+    - [ ] Redis
+    - [ ] ElasticSearch
   * Tasks
-    * Provisioning (one-time)
-    * Auto injection (continuous)
-    * Backup (continuous)
-    * Restore (one-time)
-* Reverse Proxy Provisioning
+    - [ ] Provisioning (one-time)
+    - [ ] Auto injection (continuous)
+    - [ ] Backup (continuous)
+    - [ ] Restore (one-time)
+- [ ] Reverse Proxy Provisioning
   * Types
-    * Caddy
-    * Nginx
+    - [ ] Caddy
+    - [ ] Nginx
   * Tasks
-    * Provisioning (one-time)
-* Application Monitoring (continuous)
+    - [ ] Provisioning (one-time)
+- [ ] Application Monitoring (continuous)
