@@ -1,14 +1,18 @@
-# apollo
-VM provisioning scripts + application deployment system that focuses on one-app-per-VM. Suitable for self-hosting and hobby-scale application deployments.
+# Apollo
+Linux provisioning scripts + application deployment system. Suitable for self-hosting and hobby-scale application deployments.
 
 ## Philosophy
-* One-app-per-VM: Tools such as Dokku and CapRover focuses on having multiple apps per machine/VM. I think this makes their systems more complex, more noisy-neighbor and less fault-tolerant. 
-* VM as the base: By not using higher-level abstractions such as Kubernetes, the system is easier to understand and easier to make low-level customizations (if needed). It especially allows self-hosted software that doesn't not provide a Kubernetes-native or even Docker-native deployment option to run on "bare-metal", without messing with either Kubernetes or Docker.
-* Only take what you need: You can take only a subpart/submodule of the system and use just that. For example, you can take only VM Provisioning and Security Setup, Database Provisioning and Reverse Proxy Provisioning in order to use a VM just as a dedicated database host.
+* Linux-native: Apollo tools delegate logic to Linux-native tools as much as possible.
+* Small and easy to understand: As a collary, apollo tools are small, have minimal logic, and are easy to understand.
+* Modular: Apollo tools can each be used as a standalone tool and run independently.
+* Collaborating: Apollo tools can also collaborate via small, well-defined and Linux-native interfaces.
+* Single-tenant: Apollo tools, even collaborating, only host one logical application per machine. Tools such as Dokku and CapRover focuses on hosting multiple applications per machine, which I think makes their tools more complex, their applications more resource-competing and less fault-tolerant. 
+* Self-hosted software friendly: By basing on Linux instead of higher level of abstractions such as Kubernetes, apollo tools are more suitable for self-hosted software which sometimes does not provide Kubernetes or even Docker deployment options.
+* Open for customization: By basing on Linux, it is also easier to make ad-hoc customizations to your machines and applications if needed.
 
 ## Features
-* VM Provisioning and Security Setup (one-time)
-* VM Monitoring (continuous)
+* Linux Provisioning and Security Setup (one-time)
+* Linux Monitoring (continuous)
 * Application Deployment (one-time) and Continuous Deployment (continuous)
   * Application types
     * Private non-Docker workload
