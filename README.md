@@ -1,5 +1,5 @@
 # Apollo
-Linux provisioning scripts + application deployment system. Suitable for self-hosting and hobby-scale application deployments.
+Linux provisioning scripts + application deployment tools. Suitable for self-hosting and hobby-scale application deployments.
 
 ## Philosophy
 * Linux-native: Apollo tools delegate logic to Linux-native programs as much as possible.
