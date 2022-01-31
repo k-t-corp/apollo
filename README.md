@@ -2,7 +2,7 @@
 VM provisioning scripts + application deployment system that focuses on one-app-per-VM. Suitable for self-hosting and hobby-scale application deployments.
 
 ## Features
-* VM Provisioning and security setup (one-time)
+* VM Provisioning and Security Setup (one-time)
 * VM Monitoring (continuous)
 * Application Deployment (one-time) and Continuous Deployment (continuous)
   * Application types
