@@ -4,7 +4,7 @@ VM provisioning scripts + application deployment system that focuses on one-app-
 ## Features
 * VM Provisioning (one-time)
 * VM Security setup (one-time)
-* VM Monitoring (continuous, to a central location across VMs)
+* VM Monitoring (continuous)
 * Application Deployment (one-time) and Continuous Deployment (continuous)
   * Application types
     * Private non-Docker workload
@@ -15,7 +15,7 @@ VM provisioning scripts + application deployment system that focuses on one-app-
     * Pre-deploy
     * Background
 * Environment and Secret Injection (continuous)
-* Logging (continuous, to a central location across VMs)
+* Logging (continuous)
 * Database Provisioning
   * Types
     * MongoDB
@@ -33,4 +33,4 @@ VM provisioning scripts + application deployment system that focuses on one-app-
     * Nginx
   * Tasks
     * Provisioning (one-time)
-* Application Monitoring (continuous, to a central location across VMs)
+* Application Monitoring (continuous)
