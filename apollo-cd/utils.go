@@ -3,6 +3,7 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
@@ -109,11 +110,7 @@ func systemctlStart(unitName string) error {
 	return cmd.Run()
 }
 
-func chownR(path string, uid, gid int) error {
-	return filepath.Walk(path, func(name string, info os.FileInfo, err error) error {
-		if err == nil {
-			err = os.Chown(name, uid, gid)
-		}
-		return err
-	})
+func chownR(path, user, group string) error {
+	cmd := exec.Command("sudo", "chown", "-R", fmt.Sprintf("%s:%s", user, group), path)
+	return cmd.Run()
 }

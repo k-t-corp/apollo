@@ -7,29 +7,8 @@ import (
 	"io/ioutil"
 	"os"
 	user2 "os/user"
-	"strconv"
 	"time"
 )
-
-func parseOwner(username, groupName string) (int, int, error) {
-	user, err := user2.Lookup(username)
-	if err != nil {
-		return -1, -1, err
-	}
-	uid, err := strconv.Atoi(user.Uid)
-	if err != nil {
-		return -1, -1, err
-	}
-	group, err := user2.LookupGroup(groupName)
-	if err != nil {
-		return -1, -1, err
-	}
-	gid, err := strconv.Atoi(group.Gid)
-	if err != nil {
-		return -1, -1, err
-	}
-	return uid, gid, nil
-}
 
 func isRoot() bool {
 	user, err := user2.Current()
@@ -79,7 +58,8 @@ func main() {
 	NewAppDeployment := config.NewAppDeployment
 	DeploymentSystemdServices := config.DeploymentSystemdServices
 	DeploymentDirectory := config.DeploymentDirectory
-	deploymentDirectoryUid, deploymentDirectoryGid, err := parseOwner(config.DeploymentDirectoryOwner.User, config.DeploymentDirectoryOwner.Group)
+	deploymentDirectoryUser := config.DeploymentDirectoryOwner.User
+	deploymentDirectoryGroup := config.DeploymentDirectoryOwner.Group
 	if err != nil {
 		log.Errorln(err)
 		return
@@ -89,12 +69,12 @@ func main() {
 	log.Infof("NewAppDeployment=%s", NewAppDeployment)
 	log.Infof("DeploymentSystemdServices=%s", DeploymentSystemdServices)
 	log.Infof("DeploymentDirectory=%s", DeploymentDirectory)
-	log.Infof("deploymentDirectoryUid=%d", deploymentDirectoryUid)
-	log.Infof("deploymentDirectoryGid=%d", deploymentDirectoryGid)
+	log.Infof("deploymentDirectoryUser=%s", deploymentDirectoryUser)
+	log.Infof("deploymentDirectoryGroup=%s", deploymentDirectoryGroup)
 
 	for {
 		log.Infoln("--- Running loop ---")
-		if err := loop(NewAppDeployment, DeploymentSystemdServices, DeploymentDirectory, deploymentDirectoryUid, deploymentDirectoryGid); err != nil {
+		if err := loop(NewAppDeployment, DeploymentSystemdServices, DeploymentDirectory, deploymentDirectoryUser, deploymentDirectoryGroup); err != nil {
 			log.Errorln(err)
 			return
 		}
