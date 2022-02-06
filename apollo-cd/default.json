@@ -1,0 +1,9 @@
+{
+  "NewAppDeployment": "/home/apollo/apollo-cd/new.tar.gz",
+  "DeploymentSystemdServices": ["apollo-app", "apollo-background"],
+  "DeploymentDirectory": "/home/apollo/app",
+  "DeploymentDirectoryOwner": {
+    "User": "apollo",
+    "Group": "apollo"
+  }
+}

@@ -1,80 +1,81 @@
 package main
 
 import (
-	"errors"
+	"encoding/json"
 	"flag"
-	"github.com/golang/glog"
+	log "github.com/sirupsen/logrus"
+	"io/ioutil"
 	"os"
+	user2 "os/user"
 	"time"
 )
 
-func loop(NewAppDeployment, DeploymentSystemdService, DeploymentDirectory string) error {
-	if _, err := os.Stat(NewAppDeployment); errors.Is(err, os.ErrNotExist) {
-		glog.Infof("New application deployment %s does not exist\n", NewAppDeployment)
-		return nil
-	} else if err != nil && !errors.Is(err, os.ErrNotExist) {
-		return err
+func isRoot() bool {
+	user, err := user2.Current()
+	if err != nil {
+		log.Errorln(err)
+		return false
 	}
+	return user.Name == "root"
+}
 
-	if err := systemctlStop(DeploymentSystemdService); err != nil {
-		glog.Infof("Failed to stop systemd service %s\n", DeploymentSystemdService)
-		return err
-	}
+type ConfigOwner struct {
+	User  string `json:"User"`
+	Group string `json:"Group"`
+}
 
-	for i := 0; i < 12; i++ {
-		isInactive, err := systemctlIsInactive(DeploymentSystemdService)
-		if err != nil {
-			return err
-		}
-		if isInactive {
-			break
-		}
-		time.Sleep(5 * time.Second)
-	}
-
-	if err := os.RemoveAll(DeploymentDirectory); err != nil {
-		return err
-	}
-
-	if err := untargz(NewAppDeployment, DeploymentDirectory); err != nil {
-		glog.Infof("Failed to untar new application deployment %s to %s\n", NewAppDeployment, DeploymentDirectory)
-		return err
-	}
-
-	if err := systemctlStart(DeploymentSystemdService); err != nil {
-		glog.Infof("Failed to start systemd service %s\n", DeploymentSystemdService)
-		return err
-	}
-
-	if err := os.Remove(NewAppDeployment); err != nil {
-		return err
-	}
-
-	glog.Infoln("Deployment finished")
-	return nil
+type Config struct {
+	NewAppDeployment          string      `json:"NewAppDeployment"`
+	DeploymentSystemdServices []string    `json:"DeploymentSystemdServices"`
+	DeploymentDirectory       string      `json:"DeploymentDirectory"`
+	DeploymentDirectoryOwner  ConfigOwner `json:"DeploymentDirectoryOwner"`
 }
 
 func main() {
 	flag.Parse()
 
-	NewAppDeployment := os.Getenv("NewAppDeployment")
-	DeploymentSystemdService := os.Getenv("DeploymentSystemdService")
-	DeploymentDirectory := os.Getenv("DeploymentDirectory")
-
-	if NewAppDeployment == "" || DeploymentSystemdService == "" || DeploymentDirectory == "" {
-		glog.Warningln("Overwriting all environment variables with default values")
-		NewAppDeployment = "/home/apollo/apollo-cd/new.tar.gz"
-		DeploymentSystemdService = "apollo-app"
-		DeploymentDirectory = "/home/apollo/app"
+	if !isRoot() {
+		log.Errorln("apollo-cd must be run under root")
+		return
 	}
-	glog.Infof("NewAppDeployment=%s", NewAppDeployment)
-	glog.Infof("DeploymentSystemdService=%s", DeploymentSystemdService)
-	glog.Infof("DeploymentDirectory=%s", DeploymentDirectory)
+
+	if len(os.Args) != 2 {
+		log.Errorln("Usage: apollo-cd config.json")
+		return
+	}
+
+	configBytes, err := ioutil.ReadFile(os.Args[1])
+	if err != nil {
+		log.Errorln(err)
+		return
+	}
+	var config Config
+	if err := json.Unmarshal(configBytes, &config); err != nil {
+		log.Errorln(err)
+		return
+	}
+
+	NewAppDeployment := config.NewAppDeployment
+	DeploymentSystemdServices := config.DeploymentSystemdServices
+	DeploymentDirectory := config.DeploymentDirectory
+	deploymentDirectoryUser := config.DeploymentDirectoryOwner.User
+	deploymentDirectoryGroup := config.DeploymentDirectoryOwner.Group
+	if err != nil {
+		log.Errorln(err)
+		return
+	}
+
+	log.Infoln("Configurations")
+	log.Infof("NewAppDeployment=%s", NewAppDeployment)
+	log.Infof("DeploymentSystemdServices=%s", DeploymentSystemdServices)
+	log.Infof("DeploymentDirectory=%s", DeploymentDirectory)
+	log.Infof("deploymentDirectoryUser=%s", deploymentDirectoryUser)
+	log.Infof("deploymentDirectoryGroup=%s", deploymentDirectoryGroup)
 
 	for {
-		glog.Infoln("--- Running loop ---")
-		if err := loop(NewAppDeployment, DeploymentSystemdService, DeploymentDirectory); err != nil {
-			glog.Error(err)
+		log.Infoln("--- Running loop ---")
+		if err := loop(NewAppDeployment, DeploymentSystemdServices, DeploymentDirectory, deploymentDirectoryUser, deploymentDirectoryGroup); err != nil {
+			log.Errorln(err)
 			return
 		}
 

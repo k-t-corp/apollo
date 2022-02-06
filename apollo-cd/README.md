@@ -1,23 +1,25 @@
 # apollo-cd
 `apollo-cd` is a daemon that performs rudimentary continuous deployment.
 
-## Requirements
-It expects the following locations/names as environment variables
+## Usage
+It must be run under root
 
-If any **one** of the environment variables is not provided, the daemon will use the set of default values for **all** environment variables.
+It expects a JSON configuration as the first argument. The JSON object should have the following key/value pairs
 
-| Name                       | Usage                                                               | Default value                       |
-|----------------------------|---------------------------------------------------------------------|-------------------------------------|
-| `NewAppDeployment`         | A file location for new application deployment **gzipped** tarballs | `/home/apollo/apollo-cd/new.tar.gz` |
-| `DeploymentSystemdService` | An **user instance** systemd service that runs the application      | `apollo-app`                        |
-| `DeploymentDirectory`      | A directory that stores code for the running application            | `/home/apollo/app`                  |
+| Key                         | Usage                                                               | Example value                           |
+|-----------------------------|---------------------------------------------------------------------|-----------------------------------------|
+| `NewAppDeployment`          | A file location for new application deployment **gzipped** tarballs | `/home/apollo/apollo-cd/new.tar.gz`     |
+| `DeploymentSystemdServices` | List of systemd services that runs the application                  | `["apollo-app", "apollo-background"]`   |
+| `DeploymentDirectory`       | A directory that stores code for the running application            | `/home/apollo/app`                      |
+| `DeploymentDirectoryOwner`  | `DeploymentDirectory`'s owning user and group                       | `{"User": "apollo", "Group": "apollo"}` |
 
 ## Functionality
 It does the following things in a loop:
 * Polls `NewAppDeployment`
 * If there is a tarball
-  * Fully stop `DeploymentSystemdService`
+  * Fully stop `DeploymentSystemdServices`
   * Delete `DeploymentDirectory`
   * Untar the tarball to `DeploymentDirectory`
-  * Start `DeploymentSystemdService`
+  * Own `DeploymentDirectory` to `DeploymentDirectoryOwner`
+  * Start `DeploymentSystemdServices`
   * Delete `NewAppDeployment`
