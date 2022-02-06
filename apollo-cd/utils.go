@@ -3,7 +3,7 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"github.com/golang/glog"
+	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"os/exec"
@@ -84,7 +84,7 @@ func untargz(file string, dst string) error {
 }
 
 func systemctlIsInactive(unitName string) (bool, error) {
-	cmd := exec.Command("systemctl", "--user", "is-active", unitName)
+	cmd := exec.Command("sudo", "systemctl", "is-active", unitName)
 	output, err := cmd.Output()
 	trimmedOutput := strings.TrimSpace(string(output))
 	if trimmedOutput == "inactive" {
@@ -93,18 +93,27 @@ func systemctlIsInactive(unitName string) (bool, error) {
 		return false, nil
 	}
 	if err != nil {
-		glog.Infof("Failed to query systemd unit %s active status\n%s\n", unitName, output)
+		log.Infof("Failed to query systemd unit %s active status\n%s\n", unitName, output)
 		return false, err
 	}
 	return false, nil
 }
 
 func systemctlStop(unitName string) error {
-	cmd := exec.Command("systemctl", "--user", "stop", unitName)
+	cmd := exec.Command("sudo", "systemctl", "stop", unitName)
 	return cmd.Run()
 }
 
 func systemctlStart(unitName string) error {
-	cmd := exec.Command("systemctl", "--user", "start", unitName)
+	cmd := exec.Command("sudo", "systemctl", "start", unitName)
 	return cmd.Run()
+}
+
+func chownR(path string, uid, gid int) error {
+	return filepath.Walk(path, func(name string, info os.FileInfo, err error) error {
+		if err == nil {
+			err = os.Chown(name, uid, gid)
+		}
+		return err
+	})
 }
