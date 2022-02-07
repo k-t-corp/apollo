@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	user2 "os/user"
+	"strconv"
 	"time"
 )
 
@@ -29,6 +30,26 @@ type Config struct {
 	DeploymentSystemdServices []string    `json:"DeploymentSystemdServices"`
 	DeploymentDirectory       string      `json:"DeploymentDirectory"`
 	DeploymentDirectoryOwner  ConfigOwner `json:"DeploymentDirectoryOwner"`
+}
+
+func parseOwner(username, groupName string) (int, int, error) {
+	user, err := user2.Lookup(username)
+	if err != nil {
+		return -1, -1, err
+	}
+	uid, err := strconv.Atoi(user.Uid)
+	if err != nil {
+		return -1, -1, err
+	}
+	group, err := user2.LookupGroup(groupName)
+	if err != nil {
+		return -1, -1, err
+	}
+	gid, err := strconv.Atoi(group.Gid)
+	if err != nil {
+		return -1, -1, err
+	}
+	return uid, gid, nil
 }
 
 func main() {
@@ -60,6 +81,7 @@ func main() {
 	DeploymentDirectory := config.DeploymentDirectory
 	deploymentDirectoryUser := config.DeploymentDirectoryOwner.User
 	deploymentDirectoryGroup := config.DeploymentDirectoryOwner.Group
+	uid, gid, err := parseOwner(deploymentDirectoryUser, deploymentDirectoryGroup)
 	if err != nil {
 		log.Errorln(err)
 		return
@@ -74,7 +96,7 @@ func main() {
 
 	for {
 		log.Infoln("--- Running loop ---")
-		if err := loop(NewAppDeployment, DeploymentSystemdServices, DeploymentDirectory, deploymentDirectoryUser, deploymentDirectoryGroup); err != nil {
+		if err := loop(NewAppDeployment, DeploymentSystemdServices, DeploymentDirectory, uid, gid); err != nil {
 			log.Errorln(err)
 			return
 		}
