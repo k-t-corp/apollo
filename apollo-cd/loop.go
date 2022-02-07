@@ -40,10 +40,10 @@ func loop(NewAppDeployment string, deploymentSystemdServices []string, Deploymen
 			log.Infof("Failed to start systemd service %s\n", u)
 			return err
 		}
+	}
 
-		if err := os.Remove(NewAppDeployment); err != nil {
-			return err
-		}
+	if err := os.Remove(NewAppDeployment); err != nil {
+		return err
 	}
 
 	log.Infoln("Deployment finished")
