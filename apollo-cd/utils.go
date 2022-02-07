@@ -85,7 +85,7 @@ func untargz(file string, dst string) error {
 }
 
 func systemctlIsInactive(unitName string) (bool, error) {
-	cmd := exec.Command("sudo", "systemctl", "is-active", unitName)
+	cmd := exec.Command("systemctl", "is-active", unitName)
 	output, err := cmd.Output()
 	trimmedOutput := strings.TrimSpace(string(output))
 	if trimmedOutput == "inactive" {
@@ -101,16 +101,16 @@ func systemctlIsInactive(unitName string) (bool, error) {
 }
 
 func systemctlStop(unitName string) error {
-	cmd := exec.Command("sudo", "systemctl", "stop", unitName)
+	cmd := exec.Command("systemctl", "stop", unitName)
 	return cmd.Run()
 }
 
 func systemctlStart(unitName string) error {
-	cmd := exec.Command("sudo", "systemctl", "start", unitName)
+	cmd := exec.Command("systemctl", "start", unitName)
 	return cmd.Run()
 }
 
 func chownR(path, user, group string) error {
-	cmd := exec.Command("sudo", "chown", "-R", fmt.Sprintf("%s:%s", user, group), path)
+	cmd := exec.Command("chown", "-R", fmt.Sprintf("%s:%s", user, group), path)
 	return cmd.Run()
 }
