@@ -3,10 +3,9 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"fmt"
+	"github.com/coreos/go-systemd/v22/dbus"
 	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
 )
 
@@ -83,16 +82,31 @@ func untargz(file string, dst string) error {
 }
 
 func systemctlStop(unitName string) error {
-	cmd := exec.Command("systemctl", "stop", unitName)
-	return cmd.Run()
+	conn, err := dbus.NewSystemdConnection()
+	if err != nil {
+		return nil
+	}
+	defer conn.Close()
+	_, err = conn.StopUnit(unitName, "replace", nil)
+	return err
 }
 
 func systemctlStart(unitName string) error {
-	cmd := exec.Command("systemctl", "start", unitName)
-	return cmd.Run()
+	conn, err := dbus.NewSystemdConnection()
+	if err != nil {
+		return nil
+	}
+	defer conn.Close()
+	_, err = conn.StartUnit(unitName, "replace", nil)
+	return err
 }
 
-func chownR(path, user, group string) error {
-	cmd := exec.Command("chown", "-R", fmt.Sprintf("%s:%s", user, group), path)
-	return cmd.Run()
+// https://github.com/gutengo/fil/blob/6109b2e0b5cfdefdef3a254cc1a3eaa35bc89284/file.go#L27-L34
+func chownR(path string, uid, gid int) error {
+	return filepath.Walk(path, func(name string, info os.FileInfo, err error) error {
+		if err == nil {
+			err = os.Chown(name, uid, gid)
+		}
+		return err
+	})
 }

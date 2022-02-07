@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func loop(NewAppDeployment string, deploymentSystemdServices []string, DeploymentDirectory, deploymentDirectoryUser, deploymentDirectoryGroup string) error {
+func loop(NewAppDeployment string, deploymentSystemdServices []string, DeploymentDirectory string, uid, gid int) error {
 	if _, err := os.Stat(NewAppDeployment); errors.Is(err, os.ErrNotExist) {
 		log.Infof("New application deployment %s does not exist\n", NewAppDeployment)
 		return nil
@@ -30,8 +30,8 @@ func loop(NewAppDeployment string, deploymentSystemdServices []string, Deploymen
 		return err
 	}
 
-	if err := chownR(DeploymentDirectory, deploymentDirectoryUser, deploymentDirectoryGroup); err != nil {
-		log.Infof("Failed to own %s to %s,%s\n", DeploymentDirectory, deploymentDirectoryUser, deploymentDirectoryGroup)
+	if err := chownR(DeploymentDirectory, uid, gid); err != nil {
+		log.Infof("Failed to own %s to %d,%d\n", DeploymentDirectory, uid, gid)
 		return err
 	}
 
