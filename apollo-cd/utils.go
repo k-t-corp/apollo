@@ -4,12 +4,10 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 )
 
 // Untargz takes a destination path and a reader; a tar reader loops over the tarfile
@@ -82,22 +80,6 @@ func untargz(file string, dst string) error {
 			f.Close()
 		}
 	}
-}
-
-func systemctlIsInactive(unitName string) (bool, error) {
-	cmd := exec.Command("systemctl", "is-active", unitName)
-	output, err := cmd.Output()
-	trimmedOutput := strings.TrimSpace(string(output))
-	if trimmedOutput == "inactive" {
-		return true, nil
-	} else if trimmedOutput == "active" {
-		return false, nil
-	}
-	if err != nil {
-		log.Infof("Failed to query systemd unit %s active status\n%s\n", unitName, output)
-		return false, err
-	}
-	return false, nil
 }
 
 func systemctlStop(unitName string) error {

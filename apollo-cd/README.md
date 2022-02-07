@@ -17,7 +17,7 @@ It expects a JSON configuration as the first argument. The JSON object should ha
 It does the following things in a loop:
 * Polls `NewAppDeployment`
 * If there is a tarball
-  * Fully stop `DeploymentSystemdServices`
+  * Stop `DeploymentSystemdServices`
   * Delete `DeploymentDirectory`
   * Untar the tarball to `DeploymentDirectory`
   * Own `DeploymentDirectory` to `DeploymentDirectoryOwner`

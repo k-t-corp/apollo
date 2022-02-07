@@ -4,7 +4,6 @@ import (
 	"errors"
 	log "github.com/sirupsen/logrus"
 	"os"
-	"time"
 )
 
 func loop(NewAppDeployment string, deploymentSystemdServices []string, DeploymentDirectory, deploymentDirectoryUser, deploymentDirectoryGroup string) error {
@@ -19,17 +18,6 @@ func loop(NewAppDeployment string, deploymentSystemdServices []string, Deploymen
 		if err := systemctlStop(u); err != nil {
 			log.Infof("Failed to stop systemd service %s\n", u)
 			return err
-		}
-
-		for i := 0; i < 12; i++ {
-			isInactive, err := systemctlIsInactive(u)
-			if err != nil {
-				return err
-			}
-			if isInactive {
-				break
-			}
-			time.Sleep(5 * time.Second)
 		}
 	}
 
