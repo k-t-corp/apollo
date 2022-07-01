@@ -11,15 +11,6 @@ import (
 	"time"
 )
 
-func isRoot() bool {
-	user, err := user2.Current()
-	if err != nil {
-		log.Errorln(err)
-		return false
-	}
-	return user.Name == "root"
-}
-
 type ConfigOwner struct {
 	User  string `json:"User"`
 	Group string `json:"Group"`
@@ -55,11 +46,6 @@ func parseOwner(username, groupName string) (int, int, error) {
 
 func main() {
 	flag.Parse()
-
-	if !isRoot() {
-		log.Errorln("apollo-cd must be run under root")
-		return
-	}
 
 	if len(os.Args) != 2 {
 		log.Errorln("Usage: apollo-cd config.json")
