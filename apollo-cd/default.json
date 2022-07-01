@@ -1,6 +1,7 @@
 {
   "NewAppDeployment": "/home/apollo/apollo-cd/new.tar.gz",
-  "DeploymentSystemdServices": ["apollo-app", "apollo-background"],
+  "StopDeploymentScript": "/home/apollo/app/stop.sh",
+  "StartDeploymentScript": "/home/apollo/app/start.sh",
   "DeploymentDirectory": "/home/apollo/app",
   "DeploymentDirectoryOwner": {
     "User": "apollo",
