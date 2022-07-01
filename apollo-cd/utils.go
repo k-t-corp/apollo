@@ -3,9 +3,9 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"github.com/coreos/go-systemd/v22/dbus"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -81,24 +81,17 @@ func untargz(file string, dst string) error {
 	}
 }
 
-func systemctlStop(unitName string) error {
-	conn, err := dbus.NewSystemdConnection()
-	if err != nil {
-		return nil
-	}
-	defer conn.Close()
-	_, err = conn.StopUnit(unitName, "replace", nil)
-	return err
-}
+func executeShellScript(path string) error {
+	cmd := exec.Command("/bin/sh", path)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
-func systemctlStart(unitName string) error {
-	conn, err := dbus.NewSystemdConnection()
+	err := cmd.Start()
 	if err != nil {
-		return nil
+		return err
 	}
-	defer conn.Close()
-	_, err = conn.StartUnit(unitName, "replace", nil)
-	return err
+
+	return cmd.Wait()
 }
 
 // https://github.com/gutengo/fil/blob/6109b2e0b5cfdefdef3a254cc1a3eaa35bc89284/file.go#L27-L34

@@ -1,9 +1,0 @@
-{
-  "NewAppDeployment": "/home/parallels/apollo-cd/new.tar.gz",
-  "DeploymentSystemdServices": ["demo"],
-  "DeploymentDirectory": "/home/parallels/apollo-app",
-  "DeploymentDirectoryOwner": {
-    "User": "parallels",
-    "Group": "parallels"
-  }
-}

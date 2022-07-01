@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func loop(NewAppDeployment string, deploymentSystemdServices []string, DeploymentDirectory string, uid, gid int) error {
+func loop(NewAppDeployment string, stopDeploymentScript, startDeploymentScript, DeploymentDirectory string, uid, gid int) error {
 	if _, err := os.Stat(NewAppDeployment); errors.Is(err, os.ErrNotExist) {
 		log.Infof("New application deployment %s does not exist\n", NewAppDeployment)
 		return nil
@@ -14,11 +14,9 @@ func loop(NewAppDeployment string, deploymentSystemdServices []string, Deploymen
 		return err
 	}
 
-	for _, u := range deploymentSystemdServices {
-		if err := systemctlStop(u); err != nil {
-			log.Infof("Failed to stop systemd service %s\n", u)
-			return err
-		}
+	if err := executeShellScript(stopDeploymentScript); err != nil {
+		log.Infof("Failed to execute stop deployment script %s\n", stopDeploymentScript)
+		return err
 	}
 
 	if err := os.RemoveAll(DeploymentDirectory); err != nil {
@@ -35,11 +33,9 @@ func loop(NewAppDeployment string, deploymentSystemdServices []string, Deploymen
 		return err
 	}
 
-	for _, u := range deploymentSystemdServices {
-		if err := systemctlStart(u); err != nil {
-			log.Infof("Failed to start systemd service %s\n", u)
-			return err
-		}
+	if err := executeShellScript(startDeploymentScript); err != nil {
+		log.Infof("Failed to execute start deployment script %s\n", startDeploymentScript)
+		return err
 	}
 
 	if err := os.Remove(NewAppDeployment); err != nil {

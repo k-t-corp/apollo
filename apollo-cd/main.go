@@ -26,10 +26,11 @@ type ConfigOwner struct {
 }
 
 type Config struct {
-	NewAppDeployment          string      `json:"NewAppDeployment"`
-	DeploymentSystemdServices []string    `json:"DeploymentSystemdServices"`
-	DeploymentDirectory       string      `json:"DeploymentDirectory"`
-	DeploymentDirectoryOwner  ConfigOwner `json:"DeploymentDirectoryOwner"`
+	NewAppDeployment         string      `json:"NewAppDeployment"`
+	StopDeploymentScript     string      `json:"StopDeploymentScript"`
+	StartDeploymentScript    string      `json:"StartDeploymentScript"`
+	DeploymentDirectory      string      `json:"DeploymentDirectory"`
+	DeploymentDirectoryOwner ConfigOwner `json:"DeploymentDirectoryOwner"`
 }
 
 func parseOwner(username, groupName string) (int, int, error) {
@@ -77,7 +78,8 @@ func main() {
 	}
 
 	NewAppDeployment := config.NewAppDeployment
-	DeploymentSystemdServices := config.DeploymentSystemdServices
+	StopDeploymentScript := config.StopDeploymentScript
+	StartDeploymentScript := config.StartDeploymentScript
 	DeploymentDirectory := config.DeploymentDirectory
 	deploymentDirectoryUser := config.DeploymentDirectoryOwner.User
 	deploymentDirectoryGroup := config.DeploymentDirectoryOwner.Group
@@ -89,14 +91,15 @@ func main() {
 
 	log.Infoln("Configurations")
 	log.Infof("NewAppDeployment=%s", NewAppDeployment)
-	log.Infof("DeploymentSystemdServices=%s", DeploymentSystemdServices)
+	log.Infof("StopDeploymentScript=%s", StopDeploymentScript)
+	log.Infof("StartDeploymentScript=%s", StartDeploymentScript)
 	log.Infof("DeploymentDirectory=%s", DeploymentDirectory)
 	log.Infof("deploymentDirectoryUser=%s", deploymentDirectoryUser)
 	log.Infof("deploymentDirectoryGroup=%s", deploymentDirectoryGroup)
 
 	for {
 		log.Infoln("--- Running loop ---")
-		if err := loop(NewAppDeployment, DeploymentSystemdServices, DeploymentDirectory, uid, gid); err != nil {
+		if err := loop(NewAppDeployment, StopDeploymentScript, StartDeploymentScript, DeploymentDirectory, uid, gid); err != nil {
 			log.Errorln(err)
 			return
 		}
