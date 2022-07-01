@@ -81,10 +81,11 @@ func untargz(file string, dst string) error {
 	}
 }
 
-func executeShellScript(path string) error {
+func executeShellScript(path, executeAtDir string) error {
 	cmd := exec.Command("/bin/sh", path)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	cmd.Dir = executeAtDir
 
 	err := cmd.Start()
 	if err != nil {
