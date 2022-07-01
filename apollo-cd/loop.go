@@ -14,7 +14,7 @@ func loop(NewAppDeployment string, stopDeploymentScript, startDeploymentScript, 
 		return err
 	}
 
-	if err := executeShellScript(stopDeploymentScript); err != nil {
+	if err := executeShellScript(stopDeploymentScript, DeploymentDirectory); err != nil {
 		log.Infof("Failed to execute stop deployment script %s\n", stopDeploymentScript)
 		return err
 	}
@@ -33,7 +33,7 @@ func loop(NewAppDeployment string, stopDeploymentScript, startDeploymentScript, 
 		return err
 	}
 
-	if err := executeShellScript(startDeploymentScript); err != nil {
+	if err := executeShellScript(startDeploymentScript, DeploymentDirectory); err != nil {
 		log.Infof("Failed to execute start deployment script %s\n", startDeploymentScript)
 		return err
 	}
